@@ -715,6 +715,19 @@
             }
         }
 
+        async function translateToKhmer(text) {
+            if (!text) return "";
+            try {
+                // បង្រួមអត្ថបទត្រឹម 200 តួអក្សរដើម្បីល្បឿន និងជៀសវាងបញ្ហា API Limit
+                const shortText = text.substring(0, 200);
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(shortText)}&langpair=en|km`);
+                const data = await response.json();
+                return data.responseData.translatedText || text;
+            } catch (error) {
+                return text; // បើមានបញ្ហា សូមប្រើអត្ថបទដើម
+            }
+        }
+
         async function fetchLiveNews() {
             const newsContainer = document.getElementById('news-container');
             // Using rss2json to proxy Kitco & Reuters RSS feeds
@@ -733,7 +746,7 @@
                     const data = await response.json();
                     
                     if (data.status === 'ok') {
-                        data.items.slice(0, 4).forEach(item => {
+                        for (const item of data.items.slice(0, 4)) {
                             // ពិនិត្យរកពាក្យគន្លឹះក្នុងចំណងជើង និងអត្ថបទសង្ខេប
                             const content = (item.title + " " + item.description).toLowerCase();
                             const hasImportantNews = keywords.some(kw => content.includes(kw));
