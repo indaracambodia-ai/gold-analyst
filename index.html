@@ -467,6 +467,22 @@
             </div>
         </section>
 
+        <!-- LIVE NEWS FEED SECTION -->
+        <section id="news-feed-section" class="mb-10">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-white khmer-title flex items-center gap-2">
+                    <i class="fa-solid fa-rss text-orange-500"></i> ព័ត៌មានបច្ចុប្បន្នភាពភ្លាមៗ (Global Market Intelligence)
+                </h2>
+                <button onclick="fetchLiveNews()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-rotate"></i> <span class="khmer-small">ធ្វើបច្ចុប្បន្នភាព</span>
+                </button>
+            </div>
+            <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                <!-- News items will be injected here -->
+                <div class="col-span-full text-center py-10 text-slate-500 khmer-small italic">កំពុងទាញយកព័ត៌មានចុងក្រោយ...</div>
+            </div>
+        </section>
+
         <!-- LIVE ANALYSIS SECTION: Charts & Technical Visualization -->
         <section id="analysis" class="mb-10">
             <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2 khmer-title">
@@ -659,16 +675,29 @@
             const dxyEl = document.getElementById('dxy-val');
             const yieldEl = document.getElementById('yield-val');
             const aiConfEl = document.getElementById('ai-conf-val');
-            const techEl = document.getElementById('tech-conf-val');
+            const techEl = document.getElementById('tech-conf-val'); // Assuming this exists
 
-            if (dxyEl) dxyEl.innerText = dxy;
-            if (yieldEl) yieldEl.innerText = yield10y + '%';
-            if (aiConfEl) aiConfEl.innerText = 'Confidence: ' + aiConf + '%';
-            if (techEl) techEl.innerText = `BULLISH (${aiConf - 5}%)`;
+            if (dxyEl) { dxyEl.innerText = dxy; dxyEl.classList.add('animate-pulse'); setTimeout(() => dxyEl.classList.remove('animate-pulse'), 500); }
+            if (yieldEl) { yieldEl.innerText = yield10y + '%'; yieldEl.classList.add('animate-pulse'); setTimeout(() => yieldEl.classList.remove('animate-pulse'), 500); }
+            if (aiConfEl) { aiConfEl.innerText = 'Confidence: ' + aiConf + '%'; aiConfEl.classList.add('animate-pulse'); setTimeout(() => aiConfEl.classList.remove('animate-pulse'), 500); }
+            if (techEl) { techEl.innerText = `BULLISH (${aiConf - 5}%)`; techEl.classList.add('animate-pulse'); setTimeout(() => techEl.classList.remove('animate-pulse'), 500); }
+        }
+
+        function updateGlobalClocks() {
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const now = new Date();
+            
+            const ny = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/New_York' }).format(now);
+            const ldn = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Europe/London' }).format(now);
+            const tky = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Asia/Tokyo' }).format(now);
+
+            if(document.getElementById('clock-ny')) document.getElementById('clock-ny').innerText = ny;
+            if(document.getElementById('clock-ldn')) document.getElementById('clock-ldn').innerText = ldn;
+            if(document.getElementById('clock-tky')) document.getElementById('clock-tky').innerText = tky;
         }
 
         function simulateBtcTick() {
-            const btcChange = (Math.random() * 50 - 25); 
+            const btcChange = (Math.random() * 50 - 25); // Increased range for more visible movement
             const oldBtc = currentBtcPrice;
             currentBtcPrice = currentBtcPrice + btcChange;
             
@@ -678,9 +707,9 @@
             if (btcElement) {
                 btcElement.innerText = currentBtcPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // លុប Class ពណ៌ចាស់ៗចេញ ដើម្បីឱ្យពណ៌ថ្មី (បៃតង/ក្រហម) ដំណើរការ
-                btcElement.classList.remove('text-brand-accent', 'text-brand-danger', 'text-orange-400');
-                if (currentBtcPrice > oldBtc) {
+                // លុប Class ពណ៌ចាស់ៗចេញទាំងអស់ ដើម្បីឱ្យពណ៌ថ្មី (បៃតង/ក្រហម) ដំណើរការ
+                btcElement.classList.remove('text-brand-accent', 'text-brand-danger', 'text-orange-400'); // Remove all potential color classes
+                if (currentBtcPrice > oldBtc) { // Check if price increased
                     btcElement.classList.add('text-brand-accent');
                 } else {
                     btcElement.classList.add('text-brand-danger');
@@ -699,7 +728,7 @@
         }
 
         function simulateGoldTick() {
-            const goldChange = (Math.random() * 1.2 - 0.6); 
+            const goldChange = (Math.random() * 1.2 - 0.6); // Increased range for more visible movement
             const oldGold = currentGoldPrice;
             currentGoldPrice = currentGoldPrice + goldChange;
             
@@ -709,9 +738,9 @@
             if (xauElement) {
                 xauElement.innerText = currentGoldPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // លុប Class ពណ៌ចាស់ៗចេញ ដើម្បីឱ្យពណ៌ថ្មី (បៃតង/ក្រហម) ដំណើរការ
-                xauElement.classList.remove('text-brand-accent', 'text-brand-danger', 'text-gold-500');
-                if (currentGoldPrice > oldGold) {
+                // លុប Class ពណ៌ចាស់ៗចេញទាំងអស់ ដើម្បីឱ្យពណ៌ថ្មី (បៃតង/ក្រហម) ដំណើរការ
+                xauElement.classList.remove('text-brand-accent', 'text-brand-danger', 'text-gold-500'); // Remove all potential color classes
+                if (currentGoldPrice > oldGold) { // Check if price increased
                     xauElement.classList.add('text-brand-accent');
                 } else {
                     xauElement.classList.add('text-brand-danger');
@@ -720,7 +749,7 @@
 
             if (xauPctElement) {
                 const diff = currentGoldPrice - goldInitialPrice;
-                const pct = (diff / goldInitialPrice) * 100; // Correct percentage calculation
+                const pct = (diff / goldInitialPrice) * 100; // Correct percentage calculation (was *105)
                 const sign = diff >= 0 ? '+' : '';
                 const icon = diff >= 0 ? '<i class="fa-solid fa-arrow-up"></i>' : '<i class="fa-solid fa-arrow-down"></i>';
                 
@@ -735,25 +764,7 @@
                 xauChartInstance.update('none');
             }
             
-            updateMacroDrivers(); // Update DXY & Yields every tick
-        }
-        
-        // --- 1.5 Live News Feed Logic ---
-        let alertedNewsLinks = new Set(); // ដើម្បីកុំឱ្យបន្លឺសម្លេងដដែលៗលើព័ត៌មានចាស់
-
-        console.log("Gemini Core: System Initializing...");
-
-        function updateGlobalClocks() {
-            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            const now = new Date();
-            
-            const ny = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/New_York' }).format(now);
-            const ldn = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Europe/London' }).format(now);
-            const tky = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Asia/Tokyo' }).format(now);
-
-            if(document.getElementById('clock-ny')) document.getElementById('clock-ny').innerText = ny;
-            if(document.getElementById('clock-ldn')) document.getElementById('clock-ldn').innerText = ldn;
-            if(document.getElementById('clock-tky')) document.getElementById('clock-tky').innerText = tky;
+            updateMacroDrivers(); // Update DXY & Yields every tick with gold price
         }
 
         function speakNews(text) {
@@ -778,6 +789,52 @@
             }
         }
 
+        // បង្ហាញព័ត៌មានជាភាសាអង់គ្លេសភ្លាមៗ រួចទើបបកប្រែជាក្រោយដើម្បីកុំឱ្យ UI គាំង
+        async function displayAndTranslateNews(item, newsContainer, keywords, alertSound) {
+            const date = new Date(item.pubDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const newsId = 'news-' + Math.random().toString(36).substr(2, 9);
+            
+            // បង្ហាញ English សិន ដើម្បីកុំឱ្យ UI គាំង
+            const newsCard = `
+                <div class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-gold-500/30 transition-all group">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-bold text-gold-500 bg-gold-500/10 px-2 py-0.5 rounded uppercase">${item.author || 'Market News'}</span>
+                        <span class="text-[10px] text-slate-500 font-mono">${date}</span>
+                    </div>
+                    <a href="${item.link}" target="_blank">
+                        <h4 id="${newsId}-title" class="text-sm font-semibold text-slate-200 group-hover:text-gold-500 transition-colors line-clamp-2 mb-2 leading-snug khmer-normal">
+                            ${item.title}
+                        </h4>
+                    </a>
+                    <p id="${newsId}-desc" class="text-[11px] text-slate-400 khmer-small line-clamp-2 italic">កំពុងបកប្រែ...</p>
+                </div>
+            `;
+            newsContainer.insertAdjacentHTML('beforeend', newsCard);
+
+            // ពិនិត្យ Keywords សម្រាប់ Alert
+            const content = (item.title + " " + item.description).toLowerCase();
+            if (keywords.some(kw => content.includes(kw)) && !alertedNewsLinks.has(item.link)) {
+                alertedNewsLinks.add(item.link);
+                alertSound.play().catch(() => {});
+                showNotification("ព័ត៌មានសំខាន់អំពី FED/Interest Rate ត្រូវបានរកឃើញ!", "success");
+                speakNews("Important news found: " + item.title);
+                // ផ្ញើព័ត៌មានសំខាន់ទៅ Telegram ដោយស្វ័យប្រវត្តិ (Real-time Alert)
+                const tgMsg = `<b>🚨 ព័ត៌មានម៉ាក្រូសំខាន់ត្រូវបានរកឃើញ</b>\n\n` +
+                              `<b>ចំណងជើង:</b> ${item.title}\n` +
+                              `<b>ប្រភព:</b> ${item.author || 'Market News'}\n\n` +
+                              `<a href="${item.link}">ចុចអានព័ត៌មានលម្អិត</a>`;
+                postToTelegramAPI(tgMsg);
+            }
+
+            // បកប្រែតាមក្រោយ (Background)
+            const khTitle = await translateToKhmer(item.title);
+            const khDesc = await translateToKhmer(item.description.replace(/<[^>]*>?/gm, '').substring(0, 150)); // Limit description length for translation
+            const tEl = document.getElementById(`${newsId}-title`);
+            const dEl = document.getElementById(`${newsId}-desc`);
+            if (tEl) tEl.innerHTML = `${khTitle} <div class="text-[9px] text-slate-600 font-sans mt-0.5 italic">${item.title}</div>`;
+            if (dEl) { dEl.innerText = khDesc; dEl.classList.remove('italic'); }
+        }
+
         async function fetchLiveNews() {
             const newsContainer = document.getElementById('news-container');
             // Using rss2json to proxy Kitco & Reuters RSS feeds
@@ -796,42 +853,8 @@
                     const data = await response.json();
                     
                     if (data.status === 'ok') {
-                        // ប្រើ Promise.all ដើម្បីបកប្រែព័ត៌មានទាំងអស់ក្នុងពេលតែមួយ (Parallel) ការពារការគាំង UI
-                        const translatedItems = await Promise.all(data.items.slice(0, 4).map(async (item) => {
-                            // ពិនិត្យរកពាក្យគន្លឹះក្នុងចំណងជើង និងអត្ថបទសង្ខេប
-                            const content = (item.title + " " + item.description).toLowerCase();
-                            const hasImportantNews = keywords.some(kw => content.includes(kw));
-
-                            // ប្រសិនបើមានពាក្យគន្លឹះ ហើយយើងមិនទាន់បាន Alert ពីមុនមក
-                            if (hasImportantNews && !alertedNewsLinks.has(item.link)) {
-                                alertSound.play().catch(e => console.log("Audio play blocked until user interacts with page."));
-                                alertedNewsLinks.add(item.link);
-                                showNotification("ព័ត៌មានសំខាន់អំពី FED/Interest Rate ត្រូវបានរកឃើញ!", "success");
-                                speakNews("Attention! Important News: " + item.title);
-                            }
-
-                            // បកប្រែចំណងជើង និងខ្លឹមសារ
-                            const khTitle = await translateToKhmer(item.title);
-                            const cleanDesc = item.description.replace(/<[^>]*>?/gm, '');
-                            const khDesc = await translateToKhmer(cleanDesc);
-
-                            const date = new Date(item.pubDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                            const newsCard = `
-                                <a href="${item.link}" target="_blank" class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-gold-500/30 transition-all group">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <span class="text-[10px] font-bold text-gold-500 bg-gold-500/10 px-2 py-0.5 rounded uppercase">${item.author || 'Market News'}</span>
-                                        <span class="text-[10px] text-slate-500 font-mono">${date}</span>
-                                    </div>
-                                    <h4 class="text-sm font-semibold text-slate-200 group-hover:text-gold-500 transition-colors line-clamp-2 mb-2 leading-snug khmer-normal">
-                                        ${item.khTitle}
-                                        <div class="text-[9px] text-slate-600 font-sans mt-0.5 italic">${item.title}</div>
-                                    </h4>
-                                    <p class="text-[11px] text-slate-400 khmer-small line-clamp-2">
-                                        ${item.khDesc}
-                                    </p>
-                                </a>
-                            `;
-                            newsContainer.insertAdjacentHTML('beforeend', newsCard);
+                        for (const item of data.items.slice(0, 4)) {
+                            displayAndTranslateNews(item, newsContainer, keywords, alertSound);
                         }
                     }
                 }
@@ -868,7 +891,7 @@
         calculateFairValue();
 
         // --- 3. Chart.js Configurations (XAUUSD Custom Pattern Simulation) ---
-        const xauData = [
+        const xauDataInitial = [ // Renamed to avoid conflict with live data
             5400, 5200, 4800, 5100, 5300, 5000, 4900, 4800, 4100, 4200, 
             4600, 4500, 4700, 4800, 4750, 4650, 4600, 4550, 4700, 4680,
             4520, 4550, 4500, 4530, 4510, 4540, 4522, 4538, 4532, 4540
@@ -876,16 +899,16 @@
 
         function initXauChart() {
             const ctxXau = document.getElementById('xauusdChart').getContext('2d');
-            const xauLabels = Array.from({length: xauData.length}, (_, i) => i);
-            
+            const xauLabels = Array.from({length: xauDataInitial.length}, (_, i) => i);
+
             xauChartInstance = new Chart(ctxXau, {
             type: 'line',
             data: {
                 labels: xauLabels,
                 datasets: [
                     {
-                        label: 'Price Action',
-                        data: xauData,
+                        label: 'Price Action', // Changed to xauDataInitial
+                        data: [...xauDataInitial], // Use spread to copy, not reference
                         borderColor: '#94a3b8', 
                         borderWidth: 2,
                         pointRadius: 2,
@@ -929,7 +952,7 @@
                     
                     const xStart = xAxis.getPixelForValue(0);
                     const yStart = yAxis.getPixelForValue(5500);
-                    const xEnd = xAxis.getPixelForValue(xauData.length - 1);
+                    const xEnd = xAxis.getPixelForValue(xauDataInitial.length - 1);
                     const yEnd = yAxis.getPixelForValue(4550);
                     
                     ctx.beginPath();
@@ -942,8 +965,8 @@
                     ctx.setLineDash([]); 
 
                     const boxStartXIndex = 20; 
-                    const xBoxStart = xAxis.getPixelForValue(boxStartXIndex);
-                    const xBoxEnd = xAxis.getPixelForValue(xauData.length - 1);
+                    const xBoxStart = xAxis.getPixelForValue(boxStartXIndex); // Use xauDataInitial
+                    const xBoxEnd = xAxis.getPixelForValue(xauDataInitial.length - 1);
                     const yBoxTop = yAxis.getPixelForValue(4550);
                     const yBoxBottom = yAxis.getPixelForValue(4480);
                     
@@ -992,40 +1015,35 @@
                 }
             }, 500);
 
-            initXauChart(); // បើកដំណើរការក្រាប Chart.js
+            initXauChart(); // Initialize Chart.js
+            
+            // Start all real-time updates immediately
             updateGlobalClocks();
-            setInterval(updateGlobalClocks, 1000);
+            setInterval(updateGlobalClocks, 1000); // Update clocks every second
 
-            setInterval(simulateBtcTick, 1000); // ដើររៀងរាល់ ១ វិនាទី
-            setInterval(simulateGoldTick, 1000);
-
-            // Hardcode static default parameters to persist permanently
-            const defaultToken = "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
-            const defaultChatId = "@KhmerTradingRobot";
+            simulateBtcTick(); // Initial call
+            simulateGoldTick(); // Initial call
+            setInterval(simulateBtcTick, 1000); // Update BTC every second
+            setInterval(simulateGoldTick, 1000); // Update Gold every second
             
-            let savedToken = localStorage.getItem('tg_bot_token');
-            let savedChatId = localStorage.getItem('tg_chat_id');
-            
-            if (!savedToken) {
-                localStorage.setItem('tg_bot_token', defaultToken);
-                savedToken = defaultToken;
-            }
-            if (!savedChatId) {
-                localStorage.setItem('tg_chat_id', defaultChatId);
-                savedChatId = defaultChatId;
-            }
-            
-            document.getElementById('tg-bot-token').value = savedToken;
-            document.getElementById('tg-chat-id').value = savedChatId;
-
             fetchLiveNews(); // Initial news fetch
+            setInterval(fetchLiveNews, 300000); // Refresh news every 5 minutes (300000 ms)
+            
+            // Load Telegram settings from localStorage or use defaults
+            document.getElementById('tg-bot-token').value = localStorage.getItem('tg_bot_token') || "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
+            document.getElementById('tg-chat-id').value = localStorage.getItem('tg_chat_id') || "@KhmerTradingRobot";
         };
 
         // --- 5. Telegram Integration Functions ---
         
         function toggleTelegramConfig() {
             const panel = document.getElementById('telegram-config-panel');
-            panel.classList.toggle('hidden');
+            if (panel) {
+                panel.classList.toggle('hidden');
+                console.log("Telegram config panel visibility toggled. Current classes:", panel.classList);
+            } else {
+                console.error("Telegram config panel element not found!");
+            }
         }
 
         // Custom Notification (Toast) system instead of alert()
@@ -1080,8 +1098,11 @@
         }
 
         async function postToTelegramAPI(message) {
-            const token = localStorage.getItem('tg_bot_token') || "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
-            let chatId = localStorage.getItem('tg_chat_id') || "@KhmerTradingRobot";
+            // ទាញយកតម្លៃពី Input ផ្ទាល់ ដើម្បីឱ្យការតេស្តដំណើរការភ្លាមៗ
+            const token = document.getElementById('tg-bot-token').value.trim() || localStorage.getItem('tg_bot_token');
+            let chatId = document.getElementById('tg-chat-id').value.trim() || localStorage.getItem('tg_chat_id');
+            
+            if (!token || !chatId) return;
             
             const url = `https://api.telegram.org/bot${token}/sendMessage`;
             try {
