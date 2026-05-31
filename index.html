@@ -704,9 +704,14 @@
         simulateGoldTick();
 
         // --- 1.5 Live News Feed Logic ---
+        let alertedNewsLinks = new Set(); // ដើម្បីកុំឱ្យបន្លឺសម្លេងដដែលៗលើព័ត៌មានចាស់
+
         async function fetchLiveNews() {
             const newsContainer = document.getElementById('news-container');
             // Using rss2json to proxy Kitco & Reuters RSS feeds
+            const keywords = ['fed', 'interest rate', 'fomc', 'powell', 'អត្រាការប្រាក់', 'federal reserve'];
+            const alertSound = new Audio('https://actions.google.com/sounds/v1/notifications/minimal_alert.ogg');
+            
             const feeds = [
                 'https://www.kitco.com/news/rss/',
                 'https://www.investing.com/rss/news_95.rss' // Commodities news
@@ -720,6 +725,17 @@
                     
                     if (data.status === 'ok') {
                         data.items.slice(0, 4).forEach(item => {
+                            // ពិនិត្យរកពាក្យគន្លឹះក្នុងចំណងជើង និងអត្ថបទសង្ខេប
+                            const content = (item.title + " " + item.description).toLowerCase();
+                            const hasImportantNews = keywords.some(kw => content.includes(kw));
+
+                            // ប្រសិនបើមានពាក្យគន្លឹះ ហើយយើងមិនទាន់បាន Alert ពីមុនមក
+                            if (hasImportantNews && !alertedNewsLinks.has(item.link)) {
+                                alertSound.play().catch(e => console.log("Audio play blocked until user interacts with page."));
+                                alertedNewsLinks.add(item.link);
+                                showNotification("ព័ត៌មានសំខាន់អំពី FED/Interest Rate ត្រូវបានរកឃើញ!", "success");
+                            }
+
                             const date = new Date(item.pubDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                             const newsCard = `
                                 <a href="${item.link}" target="_blank" class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-gold-500/30 transition-all group">
