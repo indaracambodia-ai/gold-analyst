@@ -746,6 +746,8 @@
                     const data = await response.json();
                     
                     if (data.status === 'ok') {
+                        const newsItems = data.items.slice(0, 4);
+                        
                         for (const item of data.items.slice(0, 4)) {
                             // ពិនិត្យរកពាក្យគន្លឹះក្នុងចំណងជើង និងអត្ថបទសង្ខេប
                             const content = (item.title + " " + item.description).toLowerCase();
@@ -759,6 +761,11 @@
                                 speakNews("Attention! Important News: " + item.title);
                             }
 
+                            // បកប្រែចំណងជើង និងខ្លឹមសារ
+                            const khTitle = await translateToKhmer(item.title);
+                            const cleanDesc = item.description.replace(/<[^>]*>?/gm, '');
+                            const khDesc = await translateToKhmer(cleanDesc);
+
                             const date = new Date(item.pubDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                             const newsCard = `
                                 <a href="${item.link}" target="_blank" class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-gold-500/30 transition-all group">
@@ -766,11 +773,12 @@
                                         <span class="text-[10px] font-bold text-gold-500 bg-gold-500/10 px-2 py-0.5 rounded uppercase">${item.author || 'Market News'}</span>
                                         <span class="text-[10px] text-slate-500 font-mono">${date}</span>
                                     </div>
-                                    <h4 class="text-sm font-semibold text-slate-200 group-hover:text-gold-500 transition-colors line-clamp-2 mb-2 leading-snug">
-                                        ${item.title}
+                                    <h4 class="text-sm font-semibold text-slate-200 group-hover:text-gold-500 transition-colors line-clamp-2 mb-2 leading-snug khmer-normal">
+                                        ${khTitle}
+                                        <div class="text-[9px] text-slate-600 font-sans mt-0.5 italic">${item.title}</div>
                                     </h4>
                                     <p class="text-[11px] text-slate-400 khmer-small line-clamp-2">
-                                        ${item.description.replace(/<[^>]*>?/gm, '')}
+                                        ${khDesc}
                                     </p>
                                 </a>
                             `;
@@ -811,15 +819,17 @@
         calculateFairValue();
 
         // --- 3. Chart.js Configurations (XAUUSD Custom Pattern Simulation) ---
-        const ctxXau = document.getElementById('xauusdChart').getContext('2d');
         const xauData = [
             5400, 5200, 4800, 5100, 5300, 5000, 4900, 4800, 4100, 4200, 
             4600, 4500, 4700, 4800, 4750, 4650, 4600, 4550, 4700, 4680,
             4520, 4550, 4500, 4530, 4510, 4540, 4522, 4538, 4532, 4540
         ];
-        const xauLabels = Array.from({length: xauData.length}, (_, i) => i);
 
-        new Chart(ctxXau, {
+        function initXauChart() {
+            const ctxXau = document.getElementById('xauusdChart').getContext('2d');
+            const xauLabels = Array.from({length: xauData.length}, (_, i) => i);
+            
+            new Chart(ctxXau, {
             type: 'line',
             data: {
                 labels: xauLabels,
@@ -908,10 +918,11 @@
                 }
             }]
         });
+        }
 
         // --- 4. Secure TradingView Initialization on Window Load ---
         window.onload = function () {
-            try {
+            setTimeout(() => {
                 if (typeof TradingView !== 'undefined' && document.getElementById('tradingview_gold_core')) {
                     new TradingView.widget({
                         "autosize": true,
@@ -930,9 +941,9 @@
                         "container_id": "tradingview_gold_core"
                     });
                 }
-            } catch (e) {
-                console.error("TradingView failed to initialize:", e);
-            }
+            }, 500);
+
+            initXauChart(); // បើកដំណើរការក្រាប Chart.js
             
             // Hardcode static default parameters to persist permanently
             const defaultToken = "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
