@@ -374,7 +374,7 @@
                             <!-- Direction Indicator -->
                             <div class="bg-slate-950/80 p-3.5 rounded-xl text-center border border-slate-800 mb-4">
                                 <span class="text-[9px] text-slate-400 uppercase tracking-widest khmer-small">ទិសដៅមាសព្យាករណ៍ (Overall Directional Bias)</span>
-                                <p class="text-3xl font-black text-brand-accent tracking-wider font-mono mt-1">BULLISH BREAKOUT</p>
+                                <p id="ai-overall-bias" class="text-3xl font-black text-brand-accent tracking-wider font-mono mt-1">BULLISH BREAKOUT</p>
                                 <span class="text-xs text-slate-400 khmer-small mt-0.5 block">ទំនោរឡើងខ្ពស់ ក្រោយទម្លុះប្រអប់ Consolidation</span>
                             </div>
 
@@ -386,7 +386,7 @@
                                         <span class="khmer-normal"><i class="fa-solid fa-chart-line text-blue-400"></i> ១. ផ្នែកបច្ចេកទេស (Technical Action)</span>
                                         <span class="text-brand-accent font-mono" id="tech-conf-val">BULLISH (80%)</span>
                                     </div>
-                                    <ul class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
+                                    <ul id="ai-tech-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
                                         <li>តម្លៃកំពុងបង្កើតមូលដ្ឋានក្នុងប្រអប់លឿងចន្លោះ <strong>4500 - 4540</strong> <span class="text-slate-500">[TradingView]</span>។</li>
                                         <li>សូចនាករ RSI និងការទម្លុះខ្សែ Trendline ធ្លាក់ចុះពណ៌ក្រហមនៅកម្រិត <strong>4545</strong> នឹងជំរុញឱ្យទិញឡើងខ្លាំង <span class="text-slate-500">[FXStreet]</span>។</li>
                                     </ul>
@@ -398,7 +398,7 @@
                                         <span class="khmer-normal"><i class="fa-solid fa-globe text-brand-warning"></i> ២. ផ្នែកព័ត៌មានគ្រឹះ (Macro Fundamentals)</span>
                                         <span class="text-brand-warning font-mono">NEUTRAL-BULLISH</span>
                                     </div>
-                                    <ul class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
+                                    <ul id="ai-macro-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
                                         <li>សំពាធរយៈពេលខ្លីមកពីកម្រិតអត្រាការប្រាក់រឹងរូសរបស់សហរដ្ឋអាមេរិក <span class="text-slate-500">[Reuters/WSJ]</span>។</li>
                                         <li>កម្រិតគ្រឹះត្រូវបានគាំទ្រដោយសារតម្រូវការទប់ទល់ហានិភ័យភូមិសាស្ត្រនយោបាយកើនឡើង <span class="text-slate-500">[CNN/Bloomberg]</span>។</li>
                                     </ul>
@@ -410,7 +410,7 @@
                                         <span class="khmer-normal"><i class="fa-solid fa-vault text-purple-400"></i> ៣. លំហូរទុន និងតម្រូវការទិញ (Flows & Buying)</span>
                                         <span class="text-brand-accent font-mono">STRONG BULLISH</span>
                                     </div>
-                                    <ul class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
+                                    <ul id="ai-flow-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
                                         <li>ធនាគារកណ្តាលនានានៅអាស៊ីបន្តទិញមាសរូបរាងពិត (Physical Accumulation) ឥតឈប់ឈរ <span class="text-slate-500">[Central Banks / WGC]</span>។</li>
                                         <li>របាយការណ៍ស្ថាប័នកំណត់ទិសដៅរយៈពេលមធ្យមឆ្ពោះទៅ <strong>$4,800</strong> <span class="text-slate-500">[Goldman Sachs / Trading Economics]</span>។</li>
                                     </ul>
@@ -423,15 +423,15 @@
                             <div class="space-y-1.5 text-[11px]">
                                 <div class="flex justify-between">
                                     <span class="text-slate-400 khmer-small">គោលដៅខ្លី (Short Target)៖</span>
-                                    <span class="font-bold text-brand-accent">4580.00$</span>
+                                    <span id="ai-target-short" class="font-bold text-brand-accent">4580.00$</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-slate-400 khmer-small">គោលដៅមធ្យម (Swing Target)៖</span>
-                                    <span class="font-bold text-gold-500">4640.00$</span>
+                                    <span id="ai-target-swing" class="font-bold text-gold-500">4640.00$</span>
                                 </div>
                                 <div class="flex justify-between text-brand-danger">
                                     <span class="text-slate-400 khmer-small">កម្រិតបដិសេធយុទ្ធសាស្ត្រ (Invalidation)៖</span>
-                                    <span class="font-bold">4480.00$</span>
+                                    <span id="ai-target-sl" class="font-bold">4480.00$</span>
                                 </div>
                             </div>
                             <!-- Send Analysis to Telegram Button -->
@@ -1415,16 +1415,32 @@
         // Send Unified Fundamental Analysis Consensus
         function sendAnalysisToTelegram() {
             const price = document.getElementById('xauusd-price').innerText;
-            const msg = `<b>📊 GEMINI AI INSTITUTIONAL GOLD ANALYSIS</b>\n` +
+            const confidence = document.getElementById('ai-conf-val').innerText;
+            const bias = document.getElementById('ai-overall-bias').innerText;
+            
+            // ទាញយកទិន្នន័យពីបញ្ជីវិភាគនីមួយៗ
+            const techItems = Array.from(document.querySelectorAll('#ai-tech-list li')).map(li => "• " + li.innerText).join('\n');
+            const macroItems = Array.from(document.querySelectorAll('#ai-macro-list li')).map(li => "• " + li.innerText).join('\n');
+            const flowItems = Array.from(document.querySelectorAll('#ai-flow-list li')).map(li => "• " + li.innerText).join('\n');
+            
+            // គោលដៅតម្លៃ
+            const shortTarget = document.getElementById('ai-target-short').innerText;
+            const swingTarget = document.getElementById('ai-target-swing').innerText;
+            const sl = document.getElementById('ai-target-sl').innerText;
+
+            const msg = `<b>📊 GEMINI AI UNIFIED CONSENSUS (XAUUSD)</b>\n` +
                         `---------------------------------------\n` +
-                        `📍 <b>Spot Gold Price:</b> $${price}\n` +
-                        `🎯 <b>AI Directional Bias:</b> <b>BULLISH BREAKOUT</b>\n` +
-                        `📈 <b>Short Target:</b> $4580.00 | <b>Swing:</b> $4640.00\n` +
-                        `🛑 <b>Invalidation Level:</b> $4480.00\n` +
+                        `💰 <b>តម្លៃបច្ចុប្បន្ន:</b> $${price}\n` +
+                        `🎯 <b>ទិសដៅរួម:</b> <b>${bias}</b>\n` +
+                        `🧠 <b>${confidence}</b>\n\n` +
+                        `<b>១. ផ្នែកបច្ចេកទេស (Technical):</b>\n${techItems}\n\n` +
+                        `<b>២. ព័ត៌មានគ្រឹះ (Macro):</b>\n${macroItems}\n\n` +
+                        `<b>៣. លំហូរទុន (Flows):</b>\n${flowItems}\n\n` +
                         `---------------------------------------\n` +
-                        `🔍 <b>Consensus Synthesis:</b>\n` +
-                        `ទោះបីជាមានសម្ពាធរយៈពេលខ្លីពីការរឹងត្អឹងនៃអត្រាការប្រាក់របស់ FED (Reuters/WSJ) ក៏ដោយ ក៏តម្រូវការទិញមាសពិតប្រាកដពីធនាគារកណ្តាល និងការគាំទ្រផ្នែកភូមិសាស្ត្រនយោបាយ (Kitco/Bloomberg) នៅតែរុញច្រានឱ្យនិន្នាការមធ្យមមានលក្ខណៈ Bullish ខ្លាំង (Goldman Sachs/WGC)។\n\n` +
-                        `<i>រក្សាសិទ្ធិគ្រប់យ៉ាងដោយ AI ProAnalyst System 2026</i>`;
+                        `📈 <b>Short Target:</b> ${shortTarget}\n` +
+                        `🚀 <b>Swing Target:</b> ${swingTarget}\n` +
+                        `🛑 <b>Stop Loss:</b> ${sl}\n\n` +
+                        `<i>Generated by Gemini Gold Fundamental Core</i>`;
             
             postToTelegramAPI(msg);
         }
