@@ -116,6 +116,21 @@
                     <a href="#simulator" class="hover:text-gold-500 transition-colors duration-200">ឧបករណ៍គណនាតម្លៃ</a>
                 </div>
                 <div class="flex items-center gap-3">
+                    <!-- Global Market Clocks -->
+                    <div class="hidden xl:flex items-center gap-4 border-r border-slate-800 pr-4 mr-1">
+                        <div class="text-right">
+                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">New York</p>
+                            <p id="clock-ny" class="text-xs font-mono text-slate-300 leading-none">00:00:00</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">London</p>
+                            <p id="clock-ldn" class="text-xs font-mono text-slate-300 leading-none">00:00:00</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Tokyo</p>
+                            <p id="clock-tky" class="text-xs font-mono text-slate-300 leading-none">00:00:00</p>
+                        </div>
+                    </div>
                     <!-- Telegram Status Indicator -->
                     <button onclick="toggleTelegramConfig()" class="bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-blue-500/30 flex items-center gap-1.5 transition-all">
                         <i class="fa-brands fa-telegram"></i> <span class="khmer-small">ការកំណត់ Telegram</span>
@@ -644,10 +659,12 @@
             const dxyEl = document.getElementById('dxy-val');
             const yieldEl = document.getElementById('yield-val');
             const aiConfEl = document.getElementById('ai-conf-val');
+            const techEl = document.getElementById('tech-conf-val');
 
             if (dxyEl) dxyEl.innerText = dxy;
             if (yieldEl) yieldEl.innerText = yield10y + '%';
             if (aiConfEl) aiConfEl.innerText = 'Confidence: ' + aiConf + '%';
+            if (techEl) techEl.innerText = `BULLISH (${aiConf - 5}%)`;
         }
 
         function simulateBtcTick() {
@@ -661,8 +678,8 @@
             if (btcElement) {
                 btcElement.innerText = currentBtcPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // Preserve existing classes, only change color class
-                btcElement.classList.remove('text-brand-accent', 'text-brand-danger');
+                // លុប Class ពណ៌ចាស់ៗចេញ ដើម្បីឱ្យពណ៌ថ្មី (បៃតង/ក្រហម) ដំណើរការ
+                btcElement.classList.remove('text-brand-accent', 'text-brand-danger', 'text-orange-400');
                 if (currentBtcPrice > oldBtc) {
                     btcElement.classList.add('text-brand-accent');
                 } else {
@@ -692,8 +709,8 @@
             if (xauElement) {
                 xauElement.innerText = currentGoldPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // Preserve existing classes, only change color class
-                xauElement.classList.remove('text-brand-accent', 'text-brand-danger');
+                // លុប Class ពណ៌ចាស់ៗចេញ ដើម្បីឱ្យពណ៌ថ្មី (បៃតង/ក្រហម) ដំណើរការ
+                xauElement.classList.remove('text-brand-accent', 'text-brand-danger', 'text-gold-500');
                 if (currentGoldPrice > oldGold) {
                     xauElement.classList.add('text-brand-accent');
                 } else {
@@ -721,14 +738,21 @@
             updateMacroDrivers(); // Update DXY & Yields every tick
         }
         
-        setInterval(simulateBtcTick, 1500);
-        setInterval(simulateGoldTick, 1500);
-        
-        simulateBtcTick();
-        simulateGoldTick();
-
         // --- 1.5 Live News Feed Logic ---
         let alertedNewsLinks = new Set(); // ដើម្បីកុំឱ្យបន្លឺសម្លេងដដែលៗលើព័ត៌មានចាស់
+
+        function updateGlobalClocks() {
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const now = new Date();
+            
+            const ny = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/New_York' }).format(now);
+            const ldn = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Europe/London' }).format(now);
+            const tky = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Asia/Tokyo' }).format(now);
+
+            if(document.getElementById('clock-ny')) document.getElementById('clock-ny').innerText = ny;
+            if(document.getElementById('clock-ldn')) document.getElementById('clock-ldn').innerText = ldn;
+            if(document.getElementById('clock-tky')) document.getElementById('clock-tky').innerText = tky;
+        }
 
         function speakNews(text) {
             if ('speechSynthesis' in window) {
@@ -770,9 +794,8 @@
                     const data = await response.json();
                     
                     if (data.status === 'ok') {
-                        const newsItems = data.items.slice(0, 4);
-                        
-                        for (const item of data.items.slice(0, 4)) {
+                        // ប្រើ Promise.all ដើម្បីបកប្រែព័ត៌មានទាំងអស់ក្នុងពេលតែមួយ (Parallel) ការពារការគាំង UI
+                        const translatedItems = await Promise.all(data.items.slice(0, 4).map(async (item) => {
                             // ពិនិត្យរកពាក្យគន្លឹះក្នុងចំណងជើង និងអត្ថបទសង្ខេប
                             const content = (item.title + " " + item.description).toLowerCase();
                             const hasImportantNews = keywords.some(kw => content.includes(kw));
@@ -798,16 +821,16 @@
                                         <span class="text-[10px] text-slate-500 font-mono">${date}</span>
                                     </div>
                                     <h4 class="text-sm font-semibold text-slate-200 group-hover:text-gold-500 transition-colors line-clamp-2 mb-2 leading-snug khmer-normal">
-                                        ${khTitle}
+                                        ${item.khTitle}
                                         <div class="text-[9px] text-slate-600 font-sans mt-0.5 italic">${item.title}</div>
                                     </h4>
                                     <p class="text-[11px] text-slate-400 khmer-small line-clamp-2">
-                                        ${khDesc}
+                                        ${item.khDesc}
                                     </p>
                                 </a>
                             `;
                             newsContainer.insertAdjacentHTML('beforeend', newsCard);
-                        });
+                        }
                     }
                 }
             } catch (error) {
@@ -969,6 +992,15 @@
 
             initXauChart(); // បើកដំណើរការក្រាប Chart.js
             
+            // ចាប់ផ្តើម Simulation តែនៅពេលដែល UI រៀបចំរួចរាល់ ១០០%
+            updateGlobalClocks();
+            setInterval(updateGlobalClocks, 1000);
+
+            simulateBtcTick();
+            simulateGoldTick();
+            setInterval(simulateBtcTick, 1500);
+            setInterval(simulateGoldTick, 1500);
+
             // Hardcode static default parameters to persist permanently
             const defaultToken = "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
             const defaultChatId = "@KhmerTradingRobot";
