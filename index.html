@@ -835,6 +835,54 @@
             if (dEl) { dEl.innerText = khDesc; dEl.classList.remove('italic'); }
         }
 
+        // --- 1.6 Scheduled Reports Logic (7AM, 1PM, 7PM) ---
+        function checkScheduledReports() {
+            const now = new Date();
+            // ទាញយកម៉ោងនៅកម្ពុជា (UTC+7)
+            const khTimeStr = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Phnom_Penh',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                hour12: false
+            }).format(now);
+            
+            const [date, hour] = khTimeStr.split(', ');
+            const currentHour = parseInt(hour);
+            const reportKey = `last_report_${date}_${currentHour}`;
+
+            // ពិនិត្យម៉ោង៖ ៧ ព្រឹក (7), ១ រសៀល (13), ៧ យប់ (19)
+            if ([7, 13, 19].includes(currentHour) && !localStorage.getItem(reportKey)) {
+                localStorage.setItem(reportKey, 'true');
+                sendScheduledSummary(currentHour);
+            }
+        }
+
+        function sendScheduledSummary(hour) {
+            const goldPrice = document.getElementById('xauusd-price').innerText;
+            const btcPrice = document.getElementById('btcusd-price').innerText;
+            const dxy = document.getElementById('dxy-val').innerText;
+            const yields = document.getElementById('yield-val').innerText;
+            const aiBias = "BULLISH BREAKOUT"; // ឬទាញចេញពី UI
+            
+            let timeLabel = hour === 7 ? "ព្រឹក (Morning Update)" : (hour === 13 ? "រសៀល (Afternoon Update)" : "យប់ (Evening Update)");
+
+            const msg = `<b>📊 របាយការណ៍ទីផ្សារប្រចាំម៉ោង ${hour}:00 ${timeLabel}</b>\n` +
+                        `---------------------------------------\n` +
+                        `💰 <b>តម្លៃមាស (Gold):</b> $${goldPrice}\n` +
+                        `₿ <b>តម្លៃ Bitcoin:</b> $${btcPrice}\n` +
+                        `---------------------------------------\n` +
+                        `📈 <b>សន្ទស្សន៍ DXY:</b> ${dxy}\n` +
+                        `🏦 <b>Real Yields:</b> ${yields}\n` +
+                        `🎯 <b>AI Directional Bias:</b> <b>${aiBias}</b>\n` +
+                        `---------------------------------------\n` +
+                        `<i>ផ្ញើចេញដោយស្វ័យប្រវត្តិពី Gemini AI System</i>`;
+            
+            postToTelegramAPI(msg);
+            console.log(`Scheduled report sent for ${hour}:00`);
+        }
+
         async function fetchLiveNews() {
             const newsContainer = document.getElementById('news-container');
             // Using rss2json to proxy Kitco & Reuters RSS feeds
@@ -1021,13 +1069,17 @@
             updateGlobalClocks();
             setInterval(updateGlobalClocks, 1000); // Update clocks every second
 
+            // ចាប់ផ្តើមការត្រួតពិនិត្យរបាយការណ៍តាមម៉ោង (រៀងរាល់ ១ នាទី)
+            checkScheduledReports();
+            setInterval(checkScheduledReports, 60000);
+
             simulateBtcTick(); // Initial call
             simulateGoldTick(); // Initial call
             setInterval(simulateBtcTick, 1000); // Update BTC every second
             setInterval(simulateGoldTick, 1000); // Update Gold every second
             
             fetchLiveNews(); // Initial news fetch
-            setInterval(fetchLiveNews, 300000); // Refresh news every 5 minutes (300000 ms)
+            setInterval(fetchLiveNews, 120000); // ប្តូរមកត្រឹម ២ នាទីម្តង ដើម្បីទាញ Breaking News ឱ្យបានលឿន
             
             // Load Telegram settings from localStorage or use defaults
             document.getElementById('tg-bot-token').value = localStorage.getItem('tg_bot_token') || "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
