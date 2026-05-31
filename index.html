@@ -706,6 +706,15 @@
         // --- 1.5 Live News Feed Logic ---
         let alertedNewsLinks = new Set(); // ដើម្បីកុំឱ្យបន្លឺសម្លេងដដែលៗលើព័ត៌មានចាស់
 
+        function speakNews(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // ព័ត៌មានភាគច្រើនជាភាសាអង់គ្លេស
+                utterance.rate = 0.9;      // ល្បឿនអានសមរម្យ
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         async function fetchLiveNews() {
             const newsContainer = document.getElementById('news-container');
             // Using rss2json to proxy Kitco & Reuters RSS feeds
@@ -734,6 +743,7 @@
                                 alertSound.play().catch(e => console.log("Audio play blocked until user interacts with page."));
                                 alertedNewsLinks.add(item.link);
                                 showNotification("ព័ត៌មានសំខាន់អំពី FED/Interest Rate ត្រូវបានរកឃើញ!", "success");
+                                speakNews("Attention! Important News: " + item.title);
                             }
 
                             const date = new Date(item.pubDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
