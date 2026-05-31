@@ -111,7 +111,7 @@
         .ticker-wrapper {
             white-space: nowrap;
             display: inline-block;
-            animation: ticker-move 25s linear infinite;
+            animation: ticker-move 20s linear infinite;
         }
         .ticker-wrapper:hover { animation-play-state: paused; }
         @keyframes ticker-move {
@@ -123,7 +123,10 @@
             padding: 0 40px;
             font-size: 0.85rem;
             color: #f1f5f9;
+            cursor: pointer;
+            transition: color 0.2s;
         }
+        .ticker-item:hover { color: #d4af37; text-decoration: underline; }
         .ticker-source { color: #ef4444; font-weight: bold; margin-right: 8px; }
     </style>
 </head>
@@ -276,10 +279,12 @@
         </div>
 
         <!-- BREAKING NEWS TICKER SECTION -->
-        <div class="ticker-container glass-panel">
-            <div class="ticker-label khmer-title"><i class="fa-solid fa-bolt mr-1"></i> BREAKING NEWS</div>
-            <div class="ticker-wrapper" id="breaking-news-ticker">
-                <span class="ticker-item khmer-small italic">កំពុងទាញយកព័ត៌មានបន្ទាន់ពី Reuters, BBC, CNN, Al Jazeera និង X...</span>
+        <div class="relative group">
+            <div class="ticker-container glass-panel mb-4">
+                <div class="ticker-label khmer-title"><i class="fa-solid fa-bolt mr-1"></i> BREAKING NEWS</div>
+                <div class="ticker-wrapper" id="breaking-news-ticker">
+                    <span class="ticker-item khmer-small italic">កំពុងទាញយកព័ត៌មានបន្ទាន់...</span>
+                </div>
             </div>
         </div>
 
@@ -813,19 +818,6 @@
             }
         }
 
-        async function translateToKhmer(text) {
-            if (!text) return "";
-            try {
-                // បង្រួមអត្ថបទត្រឹម 200 តួអក្សរដើម្បីល្បឿន និងជៀសវាងបញ្ហា API Limit
-                const shortText = text.substring(0, 200);
-                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(shortText)}&langpair=en|km`);
-                const data = await response.json();
-                return data.responseData.translatedText || text;
-            } catch (error) {
-                return text; // បើមានបញ្ហា សូមប្រើអត្ថបទដើម
-            }
-        }
-
         // បង្ហាញព័ត៌មានជាភាសាអង់គ្លេសភ្លាមៗ រួចទើបបកប្រែជាក្រោយដើម្បីកុំឱ្យ UI គាំង
         async function displayAndTranslateNews(item, newsContainer, keywords, alertSound) {
             const date = new Date(item.pubDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -854,7 +846,7 @@
                 alertedNewsLinks.add(item.link);
                 alertSound.play().catch(() => {});
                 showNotification("ព័ត៌មានសំខាន់អំពី FED/Interest Rate ត្រូវបានរកឃើញ!", "success");
-                                triggerBreakingPopUp(item.title, item.author || 'Fundamental Alert');
+                triggerBreakingPopUp(item.title, item.author || 'Fundamental Alert', item.link);
                 speakNews("Important news found: " + item.title);
                 // ផ្ញើព័ត៌មានសំខាន់ទៅ Telegram ដោយស្វ័យប្រវត្តិ (Real-time Alert)
                 const tgMsg = `<b>🚨 ព័ត៌មានម៉ាក្រូសំខាន់ត្រូវបានរកឃើញ</b>\n\n` +
@@ -864,9 +856,9 @@
                 postToTelegramAPI(tgMsg);
             }
 
-            // បកប្រែតាមក្រោយ (Background)
-            const khTitle = await translateToKhmer(item.title);
-            const khDesc = await translateToKhmer(item.description.replace(/<[^>]*>?/gm, '').substring(0, 150)); // Limit description length for translation
+            // No translation needed as per request, just use original English
+            const khTitle = item.title; // Use original English title
+            const khDesc = item.description.replace(/<[^>]*>?/gm, '').substring(0, 150); // Use original English description
             const tEl = document.getElementById(`${newsId}-title`);
             const dEl = document.getElementById(`${newsId}-desc`);
             if (tEl) tEl.innerHTML = `${khTitle} <div class="text-[9px] text-slate-600 font-sans mt-0.5 italic">${item.title}</div>`;
@@ -896,22 +888,23 @@
                         const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`);
                         const data = await res.json();
                         if (data.status === 'ok') {
-                            data.items.slice(0, 3).forEach(item => {
+                            for (const item of data.items.slice(0, 3)) {
                                 const isAlreadyAlerted = alertedNewsLinks.has(item.link);
                                 if (!isAlreadyAlerted) {
                                     alertedNewsLinks.add(item.link);
-                                    triggerBreakingPopUp(item.title, feed.name);
+                                    triggerBreakingPopUp(item.title, feed.name, item.link);
                                 }
                                 newsPool.push({ src: feed.name, text: item.title });
-                            });
+                            }
                         }
                     } catch (e) {}
                 }
 
+                // Display all news in English
                 tickerWrapper.innerHTML = newsPool.map(n => `
-                    <span class="ticker-item">
-                        <span class="ticker-source">[${n.src}]</span> ${n.text}
-                    </span>
+                    <a href="${n.link || '#'}" target="_blank" class="ticker-item khmer-small">
+                        <span class="ticker-source">[${n.src}]</span> ${n.khText}
+                    </a>
                 `).join('');
             } catch (err) { console.log("Ticker Error:", err); }
         }
