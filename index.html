@@ -275,11 +275,11 @@
                             <div class="space-y-2 text-[11px] khmer-small">
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-400">សន្ទស្សន៍លុយដុល្លារ (DXY)</span>
-                                    <span class="text-brand-danger font-mono font-bold">98.90 (Bearish for Gold)</span>
+                                    <span class="text-brand-danger font-mono font-bold" id="dxy-val">98.90</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-400">អត្រាការប្រាក់ពិត (US 10Y Yields)</span>
-                                    <span class="text-brand-danger font-mono font-bold">4.44% (Bearish for Gold)</span>
+                                    <span class="text-brand-danger font-mono font-bold" id="yield-val">4.44%</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-400">តម្រូវការទិញធនាគារកណ្តាល</span>
@@ -301,7 +301,7 @@
                                 <h3 class="text-sm font-bold text-gold-500 flex items-center gap-2 khmer-normal">
                                     <i class="fa-solid fa-brain"></i> សេចក្តីសន្និដ្ឋានរួមរបស់ AI (Unified Consensus)
                                 </h3>
-                                <span class="bg-gold-500/10 text-gold-500 text-[10px] px-2 py-0.5 rounded font-mono font-bold">Confidence: 89%</span>
+                                <span class="bg-gold-500/10 text-gold-500 text-[10px] px-2 py-0.5 rounded font-mono font-bold" id="ai-conf-val">Confidence: 89%</span>
                             </div>
 
                             <!-- Direction Indicator -->
@@ -317,7 +317,7 @@
                                 <div class="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/80">
                                     <div class="flex justify-between items-center mb-1 text-[11px] font-bold text-slate-300">
                                         <span class="khmer-normal"><i class="fa-solid fa-chart-line text-blue-400"></i> ១. ផ្នែកបច្ចេកទេស (Technical Action)</span>
-                                        <span class="text-brand-accent font-mono">BULLISH (80%)</span>
+                                        <span class="text-brand-accent font-mono" id="tech-conf-val">BULLISH (80%)</span>
                                     </div>
                                     <ul class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
                                         <li>តម្លៃកំពុងបង្កើតមូលដ្ឋានក្នុងប្រអប់លឿងចន្លោះ <strong>4500 - 4540</strong> <span class="text-slate-500">[TradingView]</span>។</li>
@@ -634,9 +634,24 @@
         let currentGoldPrice = 4540.33;
         const btcInitialPrice = 73574.99; 
         const goldInitialPrice = 4495.88;
+        let xauChartInstance; // សម្រាប់ធ្វើបច្ចុប្បន្នភាពក្រាប
+
+        function updateMacroDrivers() {
+            const dxy = (98 + Math.random() * 2).toFixed(2);
+            const yield10y = (4.4 + Math.random() * 0.1).toFixed(2);
+            const aiConf = (85 + Math.random() * 10).toFixed(0);
+            
+            const dxyEl = document.getElementById('dxy-val');
+            const yieldEl = document.getElementById('yield-val');
+            const aiConfEl = document.getElementById('ai-conf-val');
+
+            if (dxyEl) dxyEl.innerText = dxy;
+            if (yieldEl) yieldEl.innerText = yield10y + '%';
+            if (aiConfEl) aiConfEl.innerText = 'Confidence: ' + aiConf + '%';
+        }
 
         function simulateBtcTick() {
-            const btcChange = (Math.random() * 26 - 13); 
+            const btcChange = (Math.random() * 50 - 25); 
             const oldBtc = currentBtcPrice;
             currentBtcPrice = currentBtcPrice + btcChange;
             
@@ -667,7 +682,7 @@
         }
 
         function simulateGoldTick() {
-            const goldChange = (Math.random() * 0.6 - 0.3); 
+            const goldChange = (Math.random() * 1.2 - 0.6); 
             const oldGold = currentGoldPrice;
             currentGoldPrice = currentGoldPrice + goldChange;
             
@@ -695,6 +710,15 @@
                 xauPctElement.innerHTML = `${icon} ${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
                 xauPctElement.className = `text-xs font-medium flex items-center justify-end gap-1 mt-1 ${diff >= 0 ? 'text-brand-accent' : 'text-brand-danger'}`;
             }
+
+            // ធ្វើបច្ចុប្បន្នភាពក្រាប Chart.js
+            if (xauChartInstance) {
+                xauChartInstance.data.datasets[0].data.shift();
+                xauChartInstance.data.datasets[0].data.push(currentGoldPrice);
+                xauChartInstance.update('none');
+            }
+            
+            updateMacroDrivers(); // Update DXY & Yields every tick
         }
         
         setInterval(simulateBtcTick, 1500);
@@ -829,7 +853,7 @@
             const ctxXau = document.getElementById('xauusdChart').getContext('2d');
             const xauLabels = Array.from({length: xauData.length}, (_, i) => i);
             
-            new Chart(ctxXau, {
+            xauChartInstance = new Chart(ctxXau, {
             type: 'line',
             data: {
                 labels: xauLabels,
