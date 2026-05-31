@@ -741,6 +741,8 @@
         // --- 1.5 Live News Feed Logic ---
         let alertedNewsLinks = new Set(); // ដើម្បីកុំឱ្យបន្លឺសម្លេងដដែលៗលើព័ត៌មានចាស់
 
+        console.log("Gemini Core: System Initializing...");
+
         function updateGlobalClocks() {
             const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
             const now = new Date();
@@ -991,15 +993,11 @@
             }, 500);
 
             initXauChart(); // បើកដំណើរការក្រាប Chart.js
-            
-            // ចាប់ផ្តើម Simulation តែនៅពេលដែល UI រៀបចំរួចរាល់ ១០០%
             updateGlobalClocks();
             setInterval(updateGlobalClocks, 1000);
 
-            simulateBtcTick();
-            simulateGoldTick();
-            setInterval(simulateBtcTick, 1500);
-            setInterval(simulateGoldTick, 1500);
+            setInterval(simulateBtcTick, 1000); // ដើររៀងរាល់ ១ វិនាទី
+            setInterval(simulateGoldTick, 1000);
 
             // Hardcode static default parameters to persist permanently
             const defaultToken = "8937214342:AAFcdhXG9xROQ-C_qjb1ilJjnx9IjjAZXCY";
