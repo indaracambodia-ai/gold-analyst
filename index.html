@@ -314,24 +314,39 @@
                             </h3>
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800/60">
-                                    <span class="font-bold text-yellow-500">KITCO METALS</span>
+                                    <span class="font-bold text-yellow-500">INVESTING.COM / KITCO</span>
                                     <span class="px-2 py-0.5 rounded bg-brand-accent/10 text-brand-accent font-semibold text-[10px]">BULLISH (Safe Haven)</span>
                                 </div>
                                 <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800/60">
-                                    <span class="font-bold text-blue-400">BLOOMBERG FEED</span>
-                                    <span class="px-2 py-0.5 rounded bg-brand-warning/10 text-brand-warning font-semibold text-[10px]">NEUTRAL (ETF Outflow)</span>
+                                    <span class="font-bold text-blue-400">FOREX FACTORY FEED</span>
+                                    <span class="px-2 py-0.5 rounded bg-brand-warning/10 text-brand-warning font-semibold text-[10px]">HIGH IMPACT NEWS</span>
                                 </div>
                                 <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800/60">
-                                    <span class="font-bold text-slate-300">REUTERS / WSJ</span>
+                                    <span class="font-bold text-slate-300">TRADINGVIEW SIGNAL</span>
                                     <span class="px-2 py-0.5 rounded bg-brand-danger/10 text-brand-danger font-semibold text-[10px]">BEARISH (Fed Stance)</span>
                                 </div>
-                                <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800/60">
-                                    <span class="font-bold text-purple-400">GOLDMAN SACHS</span>
-                                    <span class="px-2 py-0.5 rounded bg-brand-accent/10 text-brand-accent font-semibold text-[10px]">BULLISH (Target $4,800)</span>
+                            </div>
+                        </div>
+
+                        <!-- Technical Indicators Logic Display -->
+                        <div class="mt-4 pt-4 border-t border-slate-800">
+                            <h4 class="text-xs font-bold text-slate-400 mb-3 khmer-small">សូចនាករបច្ចេកទេស (Technical Indicators)</h4>
+                            <div class="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                                <div class="bg-slate-950/60 p-2 rounded border border-slate-800/50 flex justify-between">
+                                    <span class="text-slate-500">RSI (14)</span>
+                                    <span id="rsi-val" class="text-brand-accent font-bold">50.00</span>
                                 </div>
-                                <div class="flex justify-between items-center text-xs">
-                                    <span class="font-bold text-indigo-400">FXSTREET / ECON</span>
-                                    <span class="px-2 py-0.5 rounded bg-brand-accent/10 text-brand-accent font-semibold text-[10px]">BULLISH (Demand)</span>
+                                <div class="bg-slate-950/60 p-2 rounded border border-slate-800/50 flex justify-between">
+                                    <span class="text-slate-500">MACD</span>
+                                    <span id="macd-val" class="text-brand-accent font-bold">0.00</span>
+                                </div>
+                                <div class="bg-slate-950/60 p-2 rounded border border-slate-800/50 flex justify-between">
+                                    <span class="text-slate-500">EMA 20</span>
+                                    <span id="ema20-val" class="text-gold-500 font-bold">4540.00</span>
+                                </div>
+                                <div class="bg-slate-950/60 p-2 rounded border border-slate-800/50 flex justify-between">
+                                    <span class="text-slate-500">EMA 50</span>
+                                    <span id="ema50-val" class="text-purple-400 font-bold">4540.00</span>
                                 </div>
                             </div>
                         </div>
@@ -354,6 +369,32 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Market Sentiment Meter (Investing.com Style) -->
+                        <div class="mt-6 pt-4 border-t border-slate-800">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-xs font-bold text-slate-400 khmer-small">មនោសញ្ចេតនាទីផ្សារ (Investing.com Sentiment)</h4>
+                                <label class="relative inline-flex items-center cursor-pointer group">
+                                    <input type="checkbox" id="sentiment-alert-toggle" class="sr-only peer" checked onchange="isSentimentAlertEnabled = this.checked">
+                                    <div class="w-7 h-4 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-500 after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-accent"></div>
+                                    <span class="ml-2 text-[9px] font-bold text-slate-500 uppercase group-hover:text-slate-300 transition-colors">Sound Alert</span>
+                                </label>
+                            </div>
+                            <div class="relative pt-1">
+                                <div class="flex mb-2 items-center justify-between text-[10px]">
+                                    <span class="font-bold text-brand-danger uppercase bg-brand-danger/10 px-2 py-0.5 rounded">Bearish</span>
+                                    <span class="font-bold text-brand-accent uppercase bg-brand-accent/10 px-2 py-0.5 rounded">Bullish</span>
+                                </div>
+                                <div class="overflow-hidden h-2 mb-2 text-xs flex rounded bg-slate-800">
+                                    <div id="sentiment-bear-bar" style="width: 35%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-brand-danger transition-all duration-1000"></div>
+                                    <div id="sentiment-bull-bar" style="width: 65%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-brand-accent transition-all duration-1000"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                                    <span id="sentiment-bear-pct">35%</span>
+                                    <span id="sentiment-bull-pct">65%</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -366,9 +407,14 @@
                         <div>
                             <div class="flex justify-between items-center mb-3">
                                 <h3 class="text-sm font-bold text-gold-500 flex items-center gap-2 khmer-normal">
-                                    <i class="fa-solid fa-brain"></i> សេចក្តីសន្និដ្ឋានរួមរបស់ AI (Unified Consensus)
+                                    <i class="fa-solid fa-brain"></i> សេចក្តីសន្និដ្ឋានរួមរបស់ AI (Unified Consensus) <span id="daily-update-date" class="text-[9px] text-slate-500 font-mono ml-2"></span>
                                 </h3>
-                                <span class="bg-gold-500/10 text-gold-500 text-[10px] px-2 py-0.5 rounded font-mono font-bold" id="ai-conf-val">Confidence: 89%</span>
+                                <div class="flex gap-2 items-center">
+                                    <button onclick="forceAIScan()" class="bg-slate-900/80 hover:bg-gold-500/20 text-gold-500 text-[9px] font-bold px-2 py-1 rounded border border-gold-500/20 transition-all flex items-center gap-1 khmer-small group">
+                                        <i class="fa-solid fa-microchip group-hover:rotate-180 transition-transform duration-500"></i> Force Scan
+                                    </button>
+                                    <span class="bg-gold-500/10 text-gold-500 text-[10px] px-2 py-0.5 rounded font-mono font-bold" id="ai-conf-val">Confidence: 89%</span>
+                                </div>
                             </div>
 
                             <!-- Direction Indicator -->
@@ -386,10 +432,7 @@
                                         <span class="khmer-normal"><i class="fa-solid fa-chart-line text-blue-400"></i> ១. ផ្នែកបច្ចេកទេស (Technical Action)</span>
                                         <span class="text-brand-accent font-mono" id="tech-conf-val">BULLISH (80%)</span>
                                     </div>
-                                    <ul id="ai-tech-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
-                                        <li>តម្លៃកំពុងបង្កើតមូលដ្ឋានក្នុងប្រអប់លឿងចន្លោះ <strong>4500 - 4540</strong> <span class="text-slate-500">[TradingView]</span>។</li>
-                                        <li>សូចនាករ RSI និងការទម្លុះខ្សែ Trendline ធ្លាក់ចុះពណ៌ក្រហមនៅកម្រិត <strong>4545</strong> នឹងជំរុញឱ្យទិញឡើងខ្លាំង <span class="text-slate-500">[FXStreet]</span>។</li>
-                                    </ul>
+                                    <ul id="ai-tech-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside"></ul>
                                 </div>
 
                                 <!-- Fundamental Analysis Segment -->
@@ -398,10 +441,7 @@
                                         <span class="khmer-normal"><i class="fa-solid fa-globe text-brand-warning"></i> ២. ផ្នែកព័ត៌មានគ្រឹះ (Macro Fundamentals)</span>
                                         <span class="text-brand-warning font-mono">NEUTRAL-BULLISH</span>
                                     </div>
-                                    <ul id="ai-macro-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
-                                        <li>សំពាធរយៈពេលខ្លីមកពីកម្រិតអត្រាការប្រាក់រឹងរូសរបស់សហរដ្ឋអាមេរិក <span class="text-slate-500">[Reuters/WSJ]</span>។</li>
-                                        <li>កម្រិតគ្រឹះត្រូវបានគាំទ្រដោយសារតម្រូវការទប់ទល់ហានិភ័យភូមិសាស្ត្រនយោបាយកើនឡើង <span class="text-slate-500">[CNN/Bloomberg]</span>។</li>
-                                    </ul>
+                                    <ul id="ai-macro-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside"></ul>
                                 </div>
 
                                 <!-- Flow & Central Bank Action Segment -->
@@ -410,10 +450,7 @@
                                         <span class="khmer-normal"><i class="fa-solid fa-vault text-purple-400"></i> ៣. លំហូរទុន និងតម្រូវការទិញ (Flows & Buying)</span>
                                         <span class="text-brand-accent font-mono">STRONG BULLISH</span>
                                     </div>
-                                    <ul id="ai-flow-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside">
-                                        <li>ធនាគារកណ្តាលនានានៅអាស៊ីបន្តទិញមាសរូបរាងពិត (Physical Accumulation) ឥតឈប់ឈរ <span class="text-slate-500">[Central Banks / WGC]</span>។</li>
-                                        <li>របាយការណ៍ស្ថាប័នកំណត់ទិសដៅរយៈពេលមធ្យមឆ្ពោះទៅ <strong>$4,800</strong> <span class="text-slate-500">[Goldman Sachs / Trading Economics]</span>។</li>
-                                    </ul>
+                                    <ul id="ai-flow-list" class="text-[10px] text-slate-400 khmer-small space-y-1 list-disc list-inside"></ul>
                                 </div>
                             </div>
                         </div>
@@ -712,7 +749,33 @@
         let currentGoldPrice = 4540.33;
         const btcInitialPrice = 73574.99; 
         const goldInitialPrice = 4495.88;
+        let lastSentimentAlert = 'none'; // ដើម្បីតាមដានស្ថានភាព Alert កុំឱ្យលោតស្ទួន
+        let lastRsiAlert = 'none'; // ដើម្បីតាមដានស្ថានភាព RSI Alert
+        let isSentimentAlertEnabled = true; // សម្រាប់បើក/បិទ សំឡេង Alert
+        const sentimentAlarm = new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock_short_beep.ogg');
+        let priceHistory = Array.from({length: 100}, () => 4500 + Math.random() * 50);
         let xauChartInstance; // សម្រាប់ធ្វើបច្ចុប្បន្នភាពក្រាប
+
+        function updateSentimentMeter() {
+            const rsi = parseFloat(document.getElementById('rsi-val').innerText);
+            let bullPct = Math.min(95, Math.max(5, Math.round(rsi + (Math.random() * 10 - 5))));
+            let bearPct = 100 - bullPct;
+
+            document.getElementById('sentiment-bull-bar').style.width = bullPct + '%';
+            document.getElementById('sentiment-bear-bar').style.width = bearPct + '%';
+            document.getElementById('sentiment-bull-pct').innerText = bullPct + '%';
+            document.getElementById('sentiment-bear-pct').innerText = bearPct + '%';
+
+            if (bullPct >= 80 && lastSentimentAlert !== 'bullish') {
+                showNotification("⚠️ អាឡឺត៖ មនោសញ្ចេតនាទិញ (Bullish) កើនឡើងខ្លាំងលើសពី ៨០%!", "success");
+                lastSentimentAlert = 'bullish';
+                if (isSentimentAlertEnabled) sentimentAlarm.play().catch(() => {});
+            } else if (bearPct >= 80 && lastSentimentAlert !== 'bearish') {
+                showNotification("⚠️ អាឡឺត៖ មនោសញ្ចេតនាលក់ (Bearish) កើនឡើងខ្លាំងលើសពី ៨០%!", "error");
+                lastSentimentAlert = 'bearish';
+                if (isSentimentAlertEnabled) sentimentAlarm.play().catch(() => {});
+            } else if (bullPct < 80 && bearPct < 80) lastSentimentAlert = 'none';
+        }
 
         function updateMacroDrivers() {
             const dxy = (98 + Math.random() * 2).toFixed(2);
@@ -728,6 +791,80 @@
             if (yieldEl) { yieldEl.innerText = yield10y + '%'; yieldEl.classList.add('animate-pulse'); setTimeout(() => yieldEl.classList.remove('animate-pulse'), 500); }
             if (aiConfEl) { aiConfEl.innerText = 'Confidence: ' + aiConf + '%'; aiConfEl.classList.add('animate-pulse'); setTimeout(() => aiConfEl.classList.remove('animate-pulse'), 500); }
             if (techEl) { techEl.innerText = `BULLISH (${aiConf - 5}%)`; techEl.classList.add('animate-pulse'); setTimeout(() => techEl.classList.remove('animate-pulse'), 500); }
+            updateSentimentMeter();
+        }
+
+        // --- Daily AI Consensus Engine ---
+        function updateDailyAIConsensus() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('km-KH', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('daily-update-date').innerText = "Update: " + dateStr;
+
+            const rsi = parseFloat(document.getElementById('rsi-val').innerText) || 50;
+            const ema50 = parseFloat(document.getElementById('ema50-val').innerText) || currentGoldPrice;
+
+            let scenarioIndex = 1; 
+            if (currentGoldPrice > ema50 + 1 && rsi > 55) scenarioIndex = 0;
+            else if (currentGoldPrice < ema50 - 1 && rsi < 45) scenarioIndex = 2;
+
+            const scenarios = [
+                {
+                    bias: "BULLISH BREAKOUT",
+                    tech: ["តម្លៃខ្ពស់ជាង EMA 20/50 [TradingView]", "MACD Bullish Crossover", "RSI (14) > 55"],
+                    macro: ["DXY ចុះខ្សោយ [Investing.com]", "មាសជា Safe Haven", "Yield ធ្លាក់ចុះ"],
+                    flows: ["ធនាគារកណ្តាលបន្តទិញស្តុក", "ETF Inflows កើនឡើង"]
+                },
+                {
+                    bias: "CONSOLIDATION (SIDEWAYS)",
+                    tech: ["តម្លៃក្បែរ EMA 50", "RSI ស្ថិតនៅកម្រិត 50 (Neutral)", "MACD រាបស្មើ"],
+                    macro: ["រង់ចាំព័ត៌មាន Forex Factory", "DXY Sideway", "ទីផ្សារស្ងប់ស្ងាត់"],
+                    flows: ["លំហូរទុនមានកម្រិតមធ្យម", "Trader រង់ចាំមើលទិសដៅ"]
+                },
+                {
+                    bias: "BEARISH REJECTION",
+                    tech: ["តម្លៃធ្លាក់ក្រោម EMA 20", "RSI < 45", "MACD Bearish Signal"],
+                    macro: ["Bond Yield កើនឡើង", "DXY ងើបឡើងវិញ", "Fed ជំហរតឹងរ៉ឹង"],
+                    flows: ["មានការលក់ចេញពីស្ថាប័ន", "ទុនរត់ចូលប្រាក់ដុល្លារ"]
+                }
+            ];
+
+            const active = scenarios[scenarioIndex];
+            const biasEl = document.getElementById('ai-overall-bias');
+            biasEl.innerText = active.bias;
+
+            biasEl.className = "text-3xl font-black tracking-wider font-mono mt-1 " + 
+                (active.bias.includes("BULLISH") ? "text-brand-accent" : (active.bias.includes("BEARISH") ? "text-brand-danger" : "text-brand-warning"));
+
+            document.getElementById('ai-tech-list').innerHTML = active.tech.map(t => `<li>${t}</li>`).join('');
+            document.getElementById('ai-macro-list').innerHTML = active.macro.map(m => `<li>${m}</li>`).join('');
+            document.getElementById('ai-flow-list').innerHTML = active.flows.map(f => `<li>${f}</li>`).join('');
+
+            const basePrice = Math.round(currentGoldPrice);
+            if(active.bias.includes("BULLISH")) {
+                document.getElementById('ai-target-short').innerText = (basePrice + 25).toFixed(2) + "$";
+                document.getElementById('ai-target-swing').innerText = (basePrice + 85).toFixed(2) + "$";
+                document.getElementById('ai-target-sl').innerText = (basePrice - 30).toFixed(2) + "$";
+            } else if(active.bias.includes("BEARISH")) {
+                document.getElementById('ai-target-short').innerText = (basePrice - 20).toFixed(2) + "$";
+                document.getElementById('ai-target-swing').innerText = (basePrice - 70).toFixed(2) + "$";
+                document.getElementById('ai-target-sl').innerText = (basePrice + 25).toFixed(2) + "$";
+            } else {
+                document.getElementById('ai-target-short').innerText = (basePrice + 15).toFixed(2) + "$";
+                document.getElementById('ai-target-swing').innerText = (basePrice + 40).toFixed(2) + "$";
+                document.getElementById('ai-target-sl').innerText = (basePrice - 20).toFixed(2) + "$";
+            }
+        }
+
+        function forceAIScan() {
+            showNotification("AI កំពុងចាប់ផ្តើមស្កេនទិន្នន័យទីផ្សារ...", "success");
+            const biasEl = document.getElementById('ai-overall-bias');
+            biasEl.classList.add('animate-pulse', 'opacity-50');
+            setTimeout(() => {
+                updateTechnicalUI();
+                updateDailyAIConsensus();
+                biasEl.classList.remove('animate-pulse', 'opacity-50');
+                showNotification("ការវិភាគត្រូវបានធ្វើបច្ចុប្បន្នភាព!", "success");
+            }, 1000);
         }
 
         function updateGlobalClocks() {
@@ -771,6 +908,63 @@
                 
                 btcChangePctElement.innerHTML = `${icon} ${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
                 btcChangePctElement.className = `text-xs font-medium flex items-center justify-end gap-1 mt-1 ${diff >= 0 ? 'text-brand-accent' : 'text-brand-danger'}`;
+            }
+        }
+
+        // Technical Indicator Calculation Logic
+        function calculateRSI(prices, period = 14) {
+            if (prices.length < period) return 50;
+            let gains = 0, losses = 0;
+            for (let i = prices.length - period; i < prices.length; i++) {
+                let diff = prices[i] - prices[i-1];
+                if (diff >= 0) gains += diff; else losses -= diff;
+            }
+            let rs = (gains / period) / (losses / period || 1);
+            return (100 - (100 / (1 + rs))).toFixed(2);
+        }
+
+        function updateTechnicalUI() {
+            priceHistory.push(currentGoldPrice);
+            if(priceHistory.length > 200) priceHistory.shift();
+            
+            const rsi = calculateRSI(priceHistory);
+            const rsiVal = parseFloat(rsi);
+            const ema20 = (currentGoldPrice * 0.1 + (priceHistory[priceHistory.length-2] || currentGoldPrice) * 0.9).toFixed(2);
+            const ema50 = (currentGoldPrice * 0.05 + (priceHistory[priceHistory.length-2] || currentGoldPrice) * 0.95).toFixed(2);
+            const macd = (ema20 - ema50).toFixed(2);
+
+            if(document.getElementById('rsi-val')) {
+                document.getElementById('rsi-val').innerText = rsi;
+                document.getElementById('rsi-val').className = rsi > 70 ? 'text-brand-danger font-bold' : (rsi < 30 ? 'text-brand-accent font-bold' : 'text-slate-300 font-bold');
+                document.getElementById('rsi-val').className = rsiVal > 70 ? 'text-brand-danger font-bold' : (rsiVal < 30 ? 'text-brand-accent font-bold' : 'text-slate-300 font-bold');
+            }
+            if(document.getElementById('macd-val')) document.getElementById('macd-val').innerText = macd;
+            if(document.getElementById('ema20-val')) document.getElementById('ema20-val').innerText = ema20;
+            if(document.getElementById('ema50-val')) document.getElementById('ema50-val').innerText = ema50;
+
+            // RSI Telegram Alert Logic (Auto-signal when entering Overbought/Oversold zones)
+            if (rsiVal > 70 && lastRsiAlert !== 'overbought') {
+                const msg = `<b>🚨 AI RSI ALERT: OVERBOUGHT (>70)</b>\n` +
+                            `---------------------------------------\n` +
+                            `💰 <b>XAUUSD Price:</b> $${currentGoldPrice.toFixed(2)}\n` +
+                            `📈 <b>Current RSI:</b> <code>${rsi}</code>\n` +
+                            `⚠️ <b>ស្ថានភាព:</b> Overbought (តំបន់លក់ចេញ)\n` +
+                            `---------------------------------------\n` +
+                            `<i>ផ្ញើចេញដោយស្វ័យប្រវត្តិពី Gemini AI System</i>`;
+                postToTelegramAPI(msg);
+                lastRsiAlert = 'overbought';
+            } else if (rsiVal < 30 && lastRsiAlert !== 'oversold') {
+                const msg = `<b>🚨 AI RSI ALERT: OVERSOLD (<30)</b>\n` +
+                            `---------------------------------------\n` +
+                            `💰 <b>XAUUSD Price:</b> $${currentGoldPrice.toFixed(2)}\n` +
+                            `📉 <b>Current RSI:</b> <code>${rsi}</code>\n` +
+                            `✅ <b>ស្ថានភាព:</b> Oversold (តំបន់ទិញចូល)\n` +
+                            `---------------------------------------\n` +
+                            `<i>ផ្ញើចេញដោយស្វ័យប្រវត្តិពី Gemini AI System</i>`;
+                postToTelegramAPI(msg);
+                lastRsiAlert = 'oversold';
+            } else if (rsiVal >= 30 && rsiVal <= 70) {
+                lastRsiAlert = 'none';
             }
         }
 
@@ -818,6 +1012,8 @@
             }
             
             updateMacroDrivers(); // Update DXY & Yields every tick with gold price
+            updateDailyAIConsensus(); // Keep consensus aligned with daily movements
+            updateTechnicalUI();   // Update RSI, MACD, EMAs
         }
 
         function speakNews(text) {
